@@ -31,12 +31,15 @@ def display_movie_card(movie, with_rating=False):
     # Function to display movie cards
     container = st.container()
     with container:
-        st.image(f"MovieImages/{movie.movie_id}.jpg", width=150)
+        id_num = str(movie.MovieID).replace("m", "")
+        st.image(f"MovieImages/{id_num}.jpg", width=150)
         st.markdown(f"<div style='height: 50px; font-size: 0.7em'>{
-                    movie.title}</div>", unsafe_allow_html=True)
+                    movie.Title}</div>", unsafe_allow_html=True)
+
+        # Display the rating radio buttons
         if with_rating:
             rating = st.radio("Rating", [1, 2, 3, 4, 5],
-                              key=f"rating_{movie.movie_id}",
+                              key=f"rating_{movie.MovieID}",
                               horizontal=True,
                               label_visibility="collapsed")
             return rating
@@ -53,10 +56,13 @@ if page == "System 1 - Genre":
     genre = st.selectbox("Choose a genre", recommender.genres)
     if genre:
         popular_movies = recommender.get_popular_movies(genre)
+        print(popular_movies)
         cols = st.columns(5)
+        i = 0
         for idx, movie in popular_movies.iterrows():
-            with cols[idx % 5]:
+            with cols[i % 5]:
                 display_movie_card(movie)
+            i += 1
 
 # System 2 - Collaborative
 elif page == "System 2 - Collaborative":
@@ -97,4 +103,4 @@ elif page == "System 2 - Collaborative":
             with cols[idx % 5]:
                 rating = display_movie_card(movie, with_rating=True)
                 if rating:
-                    st.session_state.user_ratings[movie.movie_id] = rating
+                    st.session_state.user_ratings[movie.MovieID] = rating
