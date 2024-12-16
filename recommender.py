@@ -5,7 +5,7 @@ import requests
 class Recommender:
     def __init__(self):
         # weighted ratings
-        self.ratings = pd.read_csv('data/normalized_rating_sorted.csv')
+        self.ratings = pd.read_csv('matrix/popularity.csv')
         self.genres = list(
             sorted(set([genre for genre in self.ratings.Genres.unique()])))
 
