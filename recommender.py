@@ -5,8 +5,8 @@ import requests
 class Recommender:
     def __init__(self):
         # Define the URL for movie data
-        movies_url = "https://liangfgithub.github.io/MovieData/movies.dat?raw=true"
-
+        movies_url = "https://github.com/lycpaul/movie-ibcf/blob/main/MovieData/movies.dat?raw=true"
+        
         # Fetch the data from the URL
         response = requests.get(movies_url)
 
