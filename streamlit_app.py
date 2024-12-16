@@ -1,11 +1,12 @@
 import streamlit as st
 import pandas as pd
-from myfuns import genres, get_displayed_movies, get_popular_movies, get_recommended_movies
+from recommender import Recommender
 
 # using bootstrap theme
 st.set_page_config(page_title="Movie Recommender", page_icon=":movie_camera:",
                    layout="wide", initial_sidebar_state="expanded")
 
+recommender = Recommender()
 # Sidebar for navigation
 with st.sidebar:
     st.markdown("""
@@ -25,10 +26,9 @@ with st.sidebar:
         label_visibility="collapsed",
     )
 
-# Function to display movie cards
-
 
 def display_movie_card(movie, with_rating=False):
+    # Function to display movie cards
     container = st.container()
     with container:
         st.image(f"MovieImages/{movie.movie_id}.jpg", width=150)
@@ -49,32 +49,33 @@ if 'user_ratings' not in st.session_state:
 
 # System 1 - Genre
 if page == "System 1 - Genre":
-    st.title("Select a genre")
-    genre = st.selectbox("Choose a genre", genres)
+    st.title("Popular movies by genre")
+    genre = st.selectbox("Choose a genre", recommender.genres)
     if genre:
-        popular_movies = get_popular_movies(genre)
+        popular_movies = recommender.get_popular_movies(genre)
         cols = st.columns(5)
         for idx, movie in popular_movies.iterrows():
             with cols[idx % 5]:
                 display_movie_card(movie)
 
-
 # System 2 - Collaborative
 elif page == "System 2 - Collaborative":
-    st.title("Rate some movies below to get recommendations")
-    movies = get_displayed_movies()
+    st.title("Rate some movies!")
+    movies = recommender.get_displayed_movies()
 
     # Toggle between recommendation page and rating page
     recommended = False
 
-    if st.button("Get recommendations"):
+    # Only enable recommendation button if there are ratings
+    has_ratings = len(st.session_state.user_ratings) > 0
+    if st.button("Get recommendations", disabled=not has_ratings):
         # Clear the page
         st.empty()
         recommended = True
         # Fetch and display recommendations
-        recommended_movies = get_recommended_movies(
+        recommended_movies = recommender.get_recommended_movies(
             st.session_state.user_ratings)
-        st.title("Your recommendations")
+        st.write("Your recommendations")
 
         # Display top 10 recommended movies in rows of 5
         rec_cols = st.columns(5)
@@ -85,6 +86,7 @@ elif page == "System 2 - Collaborative":
         if st.button("Try Again"):
             # Reset user ratings
             recommended = False
+            has_ratings = False
             st.session_state.user_ratings = {}
             st.experimental_rerun()
 
