@@ -1,6 +1,4 @@
 import streamlit as st
 
-st.title("🎈 My new app")
-st.write(
-    "Let's start building! For help and inspiration, head over to [docs.streamlit.io](https://docs.streamlit.io/)."
-)
+st.title("Movie Recommender")
+st.write("This is a movie recommender system that uses item-based collaborative filtering to recommend movies to users.")
