@@ -12,7 +12,6 @@ recommender = Recommender()
 if 'user_ratings' not in st.session_state:
     st.session_state.user_ratings = {}
 
-
 # Toggle between recommendation page and rating page
 if 'isRecommendPage' not in st.session_state:
     st.session_state.isRecommendPage = False
@@ -34,6 +33,7 @@ with st.sidebar:
         key="nav_radio",
         horizontal=True,
         label_visibility="collapsed",
+        index=1
     )
 
 
@@ -80,7 +80,6 @@ elif page == "System 2 - Collaborative":
         """Callback function to reset user ratings and session state."""
         st.session_state.isRecommendPage = False
         st.session_state.user_ratings = {}
-        print("reset user ratings", st.session_state.user_ratings)
 
     # Only enable recommendation button if there are ratings
     if st.button("Get recommendations"):
@@ -98,15 +97,19 @@ elif page == "System 2 - Collaborative":
         # Display top 10 recommended movies
         st.write("Your recommendations")
         rec_cols = st.columns(5)
+        i = 0
         for idx, movie in recommendations.head(10).iterrows():
-            with rec_cols[idx % 5]:
+            with rec_cols[i % 5]:
                 display_movie_card(movie)
+            i += 1
 
     if not st.session_state.isRecommendPage:
         # Display movies rating
         cols = st.columns(5)
+        i = 0
         for idx, movie in movies.iterrows():
-            with cols[idx % 5]:
+            with cols[i % 5]:
                 rating = display_movie_card(movie, with_rating=True)
                 if rating:
                     st.session_state.user_ratings[movie.MovieID] = rating
+            i += 1
